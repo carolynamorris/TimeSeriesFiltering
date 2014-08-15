@@ -1,26 +1,34 @@
 library(shiny)
 
 shinyUI(fluidPage(
-  titlePanel("My Shiny App"),
-  sidebarLayout(
-    sidebarPanel(
-      radioButtons("family",
-                   "Family:",
-                   c("Symmetric" = "symm",
-                     "Gaussian" = "gauss"),
-                   inline = T
-      ),
-      br(),
-      sliderInput("span",
-                  "Span:",
-                  min = 0,
-                  max = 0.05,
-                  value = 0.00414)
-    ),
+  titlePanel("Models for Outlier Detection"),
+  fluidRow(
+   
+    column(12, wellPanel(
+      h4("Model"),
+      radioButtons("model",
+                    "",
+                    c("LOESS" = "loess",
+                      "Moving Median" = "movingmedian",
+                      "Moving Average" = "movingaverage"),
+                      inline = T)
+    )),
+    
+    column(12, wellPanel(
+      h4("Parameters"),
+      # this outputs the dynamic UI component
+      uiOutput("param1"),
+      uiOutput("param2")
+    )),
+    
+    column(12, wellPanel(
+      h4("RMSE"),
+      verbatimTextOutput("RMSE")
+    )),
     
     mainPanel(
-      textOutput("RMSE"),
-      plotOutput("timeSeries")
+      plotOutput("timeSeries"),
+      plotOutput("residuals")
     )
   )
 ))
