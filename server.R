@@ -76,9 +76,7 @@ shinyServer(function(input, output) {
   
   output$timeSeries <- renderPlot({
     plot(value~time, cex = 0.8, main="Tank Level vs. Time",
-         ylab="Tank Level (feet)", xlab="Time",
-         col=ifelse(index(value) %in% outliers, "red", "black"),
-         pch=ifelse(index(value) %in% outliers, 19, 1))
+         ylab="Tank Level (feet)", xlab="Time")
     if (input$model == "loess") {
       l <- loess(value~time, data=df, span=input$span, degree=2, family=input$family)
       lines(l$fitted~time, col='dodgerblue3', lwd=2.7)      
@@ -89,6 +87,7 @@ shinyServer(function(input, output) {
       ma <- rollmean(ts, input$windowma)
       lines(ma, col="orange", lwd=2.7)
     }
+    points(time[outliers], value[outliers], cex=0.8, col="red", pch=19)
   })
   
   output$residuals <- renderPlot({
@@ -106,9 +105,8 @@ shinyServer(function(input, output) {
       time2 <- time[1:length(ma)]
     }
     
-    plot(time2, residuals, main="Residuals vs. Time",
-         ylab="Residual (feet)", xlab="Time",
-         col=ifelse(index(value) %in% outliers, "red", "black" ),
-         pch=ifelse(index(value) %in% outliers, 19, 1))
-  })
+    plot(time2, residuals, cex=0.8, main="Residuals vs. Time",
+         ylab="Residual (feet)", xlab="Time")
+    points(time2[outliers], residuals[outliers], cex=0.8, col="red", pch=19)
+    })
 })

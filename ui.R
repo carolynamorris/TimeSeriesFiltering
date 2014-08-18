@@ -28,11 +28,15 @@ shinyUI(fluidPage(
       wellPanel(
         h4("RMSE"),
         verbatimTextOutput("RMSE")
-    )),
-    
-    mainPanel(
-      plotOutput("timeSeries"),
-      plotOutput("residuals")
-    )
+    ))
+  ),
+  
+  fluidRow(
+    column(12,
+      wellPanel(
+        plotOutput("timeSeries"),
+        plotOutput("residuals")
+      )       
+    )  
   )
 ))
