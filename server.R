@@ -2,7 +2,7 @@ library(shiny)
 library(jsonlite)
 library(zoo)
 
-URL <- "/Users/carolyn/Desktop/mason.tank.may.2013.json"
+URL <- "~/Copy/CitiLogics/Public/dev/loess-app/mason.tank.may.2013.json"
 tank <- fromJSON(URL) # list
 mydata <- tank$series$data # list
 d <- mydata[[1]] # matrix (2 columns)
@@ -81,13 +81,13 @@ shinyServer(function(input, output) {
          pch=ifelse(index(value) %in% outliers, 19, 1))
     if (input$model == "loess") {
       l <- loess(value~time, data=df, span=input$span, degree=2, family=input$family)
-      lines(l$fitted~time, col='dodgerblue3', lwd=2.8)      
+      lines(l$fitted~time, col='dodgerblue3', lwd=2.7)      
     } else if (input$model == "movingmedian") {
       mm <- rollmedian(ts, input$windowmm)
-      lines(mm, col='forestgreen', lwd=2.8)
+      lines(mm, col='forestgreen', lwd=2.7)
     } else if (input$model == "movingaverage") {
       ma <- rollmean(ts, input$windowma)
-      lines(ma, col="orange", lwd=2.8)
+      lines(ma, col="orange", lwd=2.7)
     }
   })
   
@@ -95,18 +95,18 @@ shinyServer(function(input, output) {
     if (input$model == "loess") {
       l <- loess(value~time, data=df, span=input$span, degree=2, family=input$family)
       residuals <- l$residuals
-      timey <- time
+      time2 <- time
     } else if (input$model == "movingmedian") {
       mm <- rollmedian(ts, input$windowmm, align="center")
-      residuals <- mm - ts[1:length(mm)]
-      timey <- time[1:length(mm)]
+      residuals <- coredata(mm) - coredata(ts[1:length(mm)])
+      time2 <- time[1:length(mm)]
     } else if (input$model == "movingaverage") {
       ma <- rollmean(ts, input$windowma, align="center")
-      residuals <- ma - ts[1:length(ma)]
-      timey <- time[1:length(ma)]
+      residuals <- coredata(ma) - coredata(ts[1:length(ma)])
+      time2 <- time[1:length(ma)]
     }
     
-    plot(timey, residuals, main="Residuals vs. Time",
+    plot(time2, residuals, main="Residuals vs. Time",
          ylab="Residual (feet)", xlab="Time",
          col=ifelse(index(value) %in% outliers, "red", "black" ),
          pch=ifelse(index(value) %in% outliers, 19, 1))
