@@ -85,7 +85,7 @@ shinyServer(function(input, output) {
       lines(mm, col='forestgreen', lwd=2.7)
     } else if (input$model == "movingaverage") {
       ma <- rollmean(ts, input$windowma)
-      lines(ma, col="orange", lwd=2.7)
+      lines(ma, col="darkorange", lwd=2.7)
     }
     points(time[outliers], value[outliers], cex=0.8, col="red", pch=19)
   })
@@ -95,18 +95,32 @@ shinyServer(function(input, output) {
       l <- loess(value~time, data=df, span=input$span, degree=2, family=input$family)
       residuals <- l$residuals
       time2 <- time
+      
     } else if (input$model == "movingmedian") {
       mm <- rollmedian(ts, input$windowmm, align="center")
       residuals <- coredata(mm) - coredata(ts[1:length(mm)])
       time2 <- time[1:length(mm)]
+      
     } else if (input$model == "movingaverage") {
       ma <- rollmean(ts, input$windowma, align="center")
       residuals <- coredata(ma) - coredata(ts[1:length(ma)])
       time2 <- time[1:length(ma)]
     }
     
+    upperIQR <- rollapply(residuals, 5, quantile, probs=(0.75))
+    lowerIQR <- rollapply(residuals, 5, quantile, probs=(0.25))
+    
     plot(time2, residuals, cex=0.8, main="Residuals vs. Time",
          ylab="Residual (feet)", xlab="Time")
+    
+    lines(time[1:length(upperIQR)], upperIQR, col="orchid", lwd=2.7)
+    lines(time[1:length(lowerIQR)], lowerIQR, col="palegreen3", lwd=2.7)
+    
     points(time2[outliers], residuals[outliers], cex=0.8, col="red", pch=19)
+    
+    legend("topright", cex=0.75, pch=16,
+           col=c('orchid', 'palegreen3'), 
+           legend=c('Upper IQR', 'Lower IQR'),
+           ncol=2)
     })
 })
