@@ -2,7 +2,7 @@ library(shiny)
 library(jsonlite)
 library(zoo)
 
-URL <- "~/Copy/CitiLogics/Public/dev/loess-app/mason.tank.may.2013.json"
+URL <- "~/Dropbox (CitiLogics)/Public/dev/loess-app/mason.tank.may.2013.json"
 tank <- fromJSON(URL) # list
 mydata <- tank$series$data # list
 d <- mydata[[1]] # matrix (2 columns)
@@ -36,10 +36,10 @@ shinyServer(function(input, output) {
                                     min = 3,
                                     max = 100),
       "movingaverage" = numericInput("windowma",
-                              "Window Size:",
-                              value = 5,
-                              min = 3,
-                              max = 100),
+                                    "Window Size:",
+                                    value = 5,
+                                    min = 3,
+                                    max = 100),
     )
   })
   
