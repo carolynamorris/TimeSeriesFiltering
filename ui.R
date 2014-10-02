@@ -1,13 +1,13 @@
 library(shiny)
 
 shinyUI(fluidPage(
-  titlePanel("Models for Outlier Detection"),
+  titlePanel("Filters for Outlier Detection"),
   fluidRow(
    
     column(4, 
       wellPanel(
-        h4("Model"),
-        radioButtons("model",
+        h4("Filter"),
+        radioButtons("filter",
                       "",
                       c("LOESS" = "loess",
                       "Moving Median" = "movingmedian",

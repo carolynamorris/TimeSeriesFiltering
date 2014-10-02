@@ -20,10 +20,10 @@ outliers <- c(272, 299, 360, 464, 806, 1011, 1182, 1560, 2080, 2511, 2538, 2608)
 shinyServer(function(input, output) {
   
   output$param1 <- renderUI({
-    if (is.null(input$model))
+    if (is.null(input$filter))
       return()
     
-    switch(input$model,
+    switch(input$filter,
       "loess" = radioButtons("family",
                              "Family:",
                              c("Symmetric" = "symm",
@@ -44,10 +44,10 @@ shinyServer(function(input, output) {
   })
   
   output$param2 <- renderUI({
-    if (is.null(input$model))
+    if (is.null(input$filter))
       return()
     
-    switch(input$model,
+    switch(input$filter,
       "loess" = sliderInput("span",
                             "Span:",
                             min = 0,
@@ -59,15 +59,15 @@ shinyServer(function(input, output) {
   })
   
   output$RMSE <- renderPrint({ 
-    if (input$model == "loess") {  
+    if (input$filter == "loess") {  
       l <- loess(value~time, data=df, span=input$span, degree=2, family=input$family)
       rmse.loess <- round(sqrt(mean(l$residuals^2)), digits = 6)
       rmse.loess
-    } else if (input$model == "movingmedian") {
+    } else if (input$filter == "movingmedian") {
       mm <- rollmedian(ts, input$windowmm)
       rmse.mm <- round(sqrt(mean((value - mm)^2)), digits = 6)
       rmse.mm
-    } else if (input$model == "movingaverage") {
+    } else if (input$filter == "movingaverage") {
       ma <- rollmean(ts, input$windowma)
       rmse.ma <- round(sqrt(mean((value - ma)^2)), digits = 6)
       rmse.ma
@@ -77,13 +77,13 @@ shinyServer(function(input, output) {
   output$timeSeries <- renderPlot({
     plot(value~time, cex = 0.8, main="Tank Level vs. Time",
          ylab="Tank Level (feet)", xlab="Time")
-    if (input$model == "loess") {
+    if (input$filter == "loess") {
       l <- loess(value~time, data=df, span=input$span, degree=2, family=input$family)
       lines(l$fitted~time, col='dodgerblue3', lwd=2.7)      
-    } else if (input$model == "movingmedian") {
+    } else if (input$filter == "movingmedian") {
       mm <- rollmedian(ts, input$windowmm)
       lines(mm, col='forestgreen', lwd=2.7)
-    } else if (input$model == "movingaverage") {
+    } else if (input$filter == "movingaverage") {
       ma <- rollmean(ts, input$windowma)
       lines(ma, col="darkorange", lwd=2.7)
     }
@@ -91,17 +91,17 @@ shinyServer(function(input, output) {
   })
   
   output$residuals <- renderPlot({
-    if (input$model == "loess") {
+    if (input$filter == "loess") {
       l <- loess(value~time, data=df, span=input$span, degree=2, family=input$family)
       residuals <- l$residuals
       time2 <- time
       
-    } else if (input$model == "movingmedian") {
+    } else if (input$filter == "movingmedian") {
       mm <- rollmedian(ts, input$windowmm, align="center")
       residuals <- coredata(mm) - coredata(ts[1:length(mm)])
       time2 <- time[1:length(mm)]
       
-    } else if (input$model == "movingaverage") {
+    } else if (input$filter == "movingaverage") {
       ma <- rollmean(ts, input$windowma, align="center")
       residuals <- coredata(ma) - coredata(ts[1:length(ma)])
       time2 <- time[1:length(ma)]
