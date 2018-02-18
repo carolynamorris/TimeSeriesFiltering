@@ -2,7 +2,7 @@ library(shiny)
 library(jsonlite)
 library(zoo)
 
-URL <- "~/Dropbox (CitiLogics)/Public/dev/loess-app/mason.tank.may.2013.json"
+URL <- "~/Desktop/TimeSeriesFiltering/data/TankMay2013.json"
 tank <- fromJSON(URL) # list
 mydata <- tank$series$data # list
 d <- mydata[[1]] # matrix (2 columns)
